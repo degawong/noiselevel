@@ -119,7 +119,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		for (int i = 0; i < noisesigmalist.size(); i++){
 			noiseestimation.at<float>(0, i) = noisesigmalist.at(i);
 		}
-		outfile.open("noiselevelrecord.txt", ios::app | ios::binary);
+		outfile.open("noiseleve.txt", ios::app | ios::binary);
 		outfile << setw(10) << "std : " << stdnoise.t() << endl;
 		outfile << setw(10) << "est : " << noiseestimation << endl;
 		outfile.close();
