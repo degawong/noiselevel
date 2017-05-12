@@ -5,16 +5,17 @@
 
 using namespace cv;
 using namespace std;
+
 int _tmain(int argc, _TCHAR* argv[])
 {
 	vector<float> noiselevellist;
 	for (int i = 0; i <= 45; i++){
 		noiselevellist.push_back((float)i + 5.0f);
 	}
-	Mat oriimage = imread("colorlena.bmp");
-	ofstream outfile("noiseleve.txt", ios::trunc);
+	Mat oriimage = imread("./images/wood.jpg");
+	ofstream outfile("./images/wood.txt", ios::trunc);
 	outfile.close();
-	FileStorage noiselevelfile("noiseleve.yaml", FileStorage::WRITE);
+	//FileStorage noiselevelfile("noiseleve.yaml", FileStorage::WRITE);
 	for (int noiselevellistcount = 0; noiselevellistcount < noiselevellist.size(); noiselevellistcount++){
 		// save the estimate noise level
 		vector<float> noisesigmalist;
@@ -48,10 +49,10 @@ int _tmain(int argc, _TCHAR* argv[])
 		image = image + noise;
 		// image preproccessing  
 		filter2D(image, filtimage, image.depth(), filtker, Point(-1, -1), 0, BORDER_REPLICATE);
-		Mat imageh = filtimage(Range(1, 255), Range::all());
+		Mat imageh = filtimage(Range(1, image.rows - 1), Range::all());
 		Mat imagehh = imageh.mul(imageh);
 		filter2D(image, filtimage, image.depth(), filtker.t(), Point(-1, -1), 0, BORDER_REPLICATE);
-		Mat imagev = filtimage(Range::all(), Range(1, 255));
+		Mat imagev = filtimage(Range::all(), Range(1, image.cols - 1));
 		Mat imagevv = imagev.mul(imagev);
 		vector<Mat> imagechanlesh;
 		split(imagehh, imagechanlesh);
@@ -119,13 +120,13 @@ int _tmain(int argc, _TCHAR* argv[])
 		for (int i = 0; i < noisesigmalist.size(); i++){
 			noiseestimation.at<float>(0, i) = noisesigmalist.at(i);
 		}
-		outfile.open("noiseleve.txt", ios::app | ios::binary);
+		outfile.open("./images/wood.txt", ios::app | ios::binary);
 		outfile << setw(10) << "std : " << stdnoise.t() << endl;
 		outfile << setw(10) << "est : " << noiseestimation << endl;
 		outfile.close();
-		noiselevelfile << "std" << stdnoise;
-		noiselevelfile << "est" << noiseestimation;
+		//noiselevelfile << "std" << stdnoise;
+		//noiselevelfile << "est" << noiseestimation;
 	}
-	noiselevelfile.release();
+	//noiselevelfile.release();
 	return 0;
 }
